@@ -1,29 +1,17 @@
 import { useEffect, useState } from "react";
 import {
   Link,
-  BarChart3,
-  User,
-  Menu,
   X,
-  Copy,
-  ExternalLink,
-  Eye,
-  Calendar,
-  Edit2,
-  Trash2,
   Search,
-  Filter,
   Download,
   Plus,
   Globe,
   MousePointer,
-  TrendingUp,
-  Pause,
 } from "lucide-react";
 import axios from "axios";
 import { host } from "../../globalVar";
 import LinksTable from "../LinksTable/LinksTable";
-import { changeLinkStatus } from "../../services/UrlServices";
+import { changeLinkStatus, getAllLinks } from "../../services/UrlServices";
 
 export default function LinksPage() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -41,15 +29,12 @@ export default function LinksPage() {
   const getAllLinksData = async () => {
     try {
       if (user) {
-        console.log("in links tab");
-        const response = await axios.get(`${host}/all-links-data`, {
-          headers: {
-            user_id: user.id,
-          },
-        });
+        const response = await getAllLinks();
 
-        console.log(response.data.links);
-        const newLinks = response.data.links;
+        console.log(response);
+        const newLinks = [...response].sort(
+          (a, b) => new Date(b.created_at) - new Date(a.created_at)
+        );
         setLinks(newLinks);
       }
     } catch (error) {
@@ -130,7 +115,10 @@ export default function LinksPage() {
     setLinks((prev) =>
       prev.map((link) =>
         link.url_id === id
-          ? { ...link, status: link.status === "active" ? "in-active" : "active" }
+          ? {
+              ...link,
+              status: link.status === "active" ? "in-active" : "active",
+            }
           : link
       )
     );
@@ -139,10 +127,16 @@ export default function LinksPage() {
   const redirectToLink = (link) => {
     if (link.status === "active") {
       window.open(`http://localhost:8000/${link.short_code}`, "_blank");
-      setLinks((prev) => prev.map((url) => url.url_id===link.url_id ? {...url, click_count: url.click_count + 1} : url))
+      setLinks((prev) =>
+        prev.map((url) =>
+          url.url_id === link.url_id
+            ? { ...url, click_count: url.click_count + 1 }
+            : url
+        )
+      );
     }
   };
-  
+
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem("user"));
     if (storedUser) {
@@ -245,7 +239,7 @@ export default function LinksPage() {
                     disabled={!newUrl}
                     className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white px-4 py-2 rounded-md font-medium transition-colors"
                   >
-                    Create Link
+                    {editLinkData ? "Edit Link" : "Create Link"}
                   </button>
                 </div>
               </div>

@@ -8,6 +8,9 @@ import {
   Link2Icon,
   Link2,
   Home,
+  User2,
+  PowerCircle,
+  Power,
 } from "lucide-react";
 import { useContext, useEffect, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
@@ -98,8 +101,8 @@ export default function Navbar() {
                     : "text-gray-600 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors flex items-center"
                 }
               >
-                <BarChart3 className="h-4 w-4 mr-1" />
-                Analytics
+                <User2 className="h-4 w-4 mr-1" />
+                Profile
               </NavLink>
             </div>
           </div>
@@ -130,9 +133,10 @@ export default function Navbar() {
                 </div>
               </button>
               <button
-                className="text-gray-600 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors"
+                className="text-gray-600 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors flex items-center"
                 onClick={handleLogout}
               >
+                <Power className="h-4 w-4 mr-2" />
                 Logout
               </button>
             </div>

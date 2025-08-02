@@ -70,7 +70,7 @@ const HomePage = () => {
           <div className="text-center">
             <div className="flex justify-center items-center mb-6">
               <Link className="h-16 w-16 text-blue-600" />
-              <span className="ml-4 text-4xl font-bold text-gray-900">ShortURL</span>
+              <span className="ml-4 text-4xl font-bold text-gray-900">ShortLink</span>
             </div>
             
             <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6 leading-tight">

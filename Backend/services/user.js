@@ -108,7 +108,6 @@ async function changeStatus(id) {
 async function updateUrl(linkData) {
     try {
         const {id, newUrl, customAlias} = linkData;
-        console.log(linkData)
         let data;
 
         if(!newUrl || !id) {
@@ -116,7 +115,7 @@ async function updateUrl(linkData) {
         }
 
         if(id && newUrl && customAlias) {
-            await db.execute(`UPDATE short_urls SET original_url = "${newUrl}" AND custom_alias = "${customAlias}" WHERE url_id = ${id}`)
+            await db.execute(`UPDATE short_urls SET original_url = "${newUrl}", custom_alias = "${customAlias}" WHERE url_id = ${id}`)
         } else if (id && newUrl) {
             await db.execute(`UPDATE short_urls SET original_url = "${newUrl}" WHERE url_id = ${id}`)
         }
@@ -125,7 +124,7 @@ async function updateUrl(linkData) {
 
         return data[0];
     } catch (error) {
-        console.error("DB error: ", error.message)
+        console.error("DB error- ", error.message)
     }
 }
 

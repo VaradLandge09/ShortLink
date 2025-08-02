@@ -68,6 +68,27 @@ export const createNewUrl = async (newUrl, customAlias) => {
     }
 };
 
+export const getAllLinks = async () => {
+    try {
+
+        const user = getUser();
+
+        const response = await axios.get(`${host}/all-links-data`, {
+            headers: {
+                user_id: user.id,
+            },
+        });
+
+        console.log(response)
+
+        return response.data?.links;
+
+
+    } catch (error) {
+        console.error("Error: ", error.message)
+    }
+}
+
 export const editUrl = async ({ id, newUrl, customAlias }) => {
     try {
 

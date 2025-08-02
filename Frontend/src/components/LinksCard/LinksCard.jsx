@@ -1,4 +1,3 @@
-import React from "react";
 import {
   Copy,
   ExternalLink,
@@ -9,10 +8,11 @@ import {
   Pause,
   SatelliteIcon,
   Play,
+  BarChart3,
 } from "lucide-react";
+import { Tooltip } from "react-tooltip";
 
 function LinksCard({ links = [], deleteUrl, updateStatus, redirect, onEdit }) {
-
   const copyToClipboard = (short) => {
     window.navigator.clipboard.writeText(short);
   };
@@ -39,18 +39,36 @@ function LinksCard({ links = [], deleteUrl, updateStatus, redirect, onEdit }) {
                 <h3 className="text-sm font-medium text-blue-600 truncate">
                   {link?.custom_alias ? link?.custom_alias : link?.short_code}
                 </h3>
-                <button
-                  onClick={() => copyToClipboard(link?.short_code)}
-                  className="text-gray-400 hover:text-gray-600"
-                >
-                  <Copy className="h-4 w-4" />
-                </button>
-                <button
-                  onClick={(e) => redirect(link)}
-                  className="text-gray-400 hover:text-gray-600"
-                >
-                  <ExternalLink className="h-4 w-4" />
-                </button>
+                <div>
+                  <button
+                    data-tooltip-id="copy-tooltip"
+                    data-tooltip-content={"Copy"}
+                    onClick={() => copyToClipboard(link?.short_code)}
+                    className="text-gray-400 hover:text-gray-600"
+                  >
+                    <Copy className="h-4 w-4" />
+                  </button>
+                  <Tooltip
+                    id="copy-tooltip"
+                    noArrow
+                    className="!py-0 !px-2 !bg-gray-700 !text-white !rounded-lg"
+                  />
+                </div>
+                <div>
+                  <button
+                    data-tooltip-id="link-tooltip"
+                    data-tooltip-content={"Redirect"}
+                    onClick={(e) => redirect(link)}
+                    className="text-gray-400 hover:text-gray-600"
+                  >
+                    <ExternalLink className="h-4 w-4" />
+                  </button>
+                  <Tooltip
+                    id="link-tooltip"
+                    noArrow
+                    className="!py-0 !px-2 !bg-gray-700 !text-white !rounded-lg"
+                  />
+                </div>
               </div>
               <p className="text-sm text-gray-600 truncate mb-2">
                 {link?.original_url}
@@ -71,31 +89,68 @@ function LinksCard({ links = [], deleteUrl, updateStatus, redirect, onEdit }) {
               </div>
             </div>
             <div className="flex items-center space-x-2 ml-4">
-              {link?.status === "active" && (
+              <div>
                 <button
+                  data-tooltip-id="status-tooltip"
+                  data-tooltip-content={
+                    link?.status === "active" ? "Deactivate" : "Activate"
+                  }
                   onClick={() => updateStatus(link?.url_id)}
                   className="text-gray-400 hover:text-blue-600"
                 >
-                  <Pause className="h-4 w-4" />
+                  {link?.status === "active" && <Pause className="h-4 w-4" />}
+                  {link?.status === "in-active" && <Play className="h-4 w-4" />}
                 </button>
-              )}
-              {link?.status === "in-active" && (
+                <Tooltip
+                  id="status-tooltip"
+                  noArrow
+                  className="!py-0 !px-2 !bg-gray-700 !text-white !rounded-lg"
+                />
+              </div>
+              <div>
                 <button
-                  onClick={() => updateStatus(link?.url_id)}
+                  data-tooltip-id="analysis-tooltip"
+                  data-tooltip-content={"Open analysis"}
                   className="text-gray-400 hover:text-blue-600"
                 >
-                  <Play className="h-4 w-4" />
+                  <BarChart3 className="h-4 w-4" />
                 </button>
-              )}
-              <button onClick={() => onEdit(link)} className="text-gray-400 hover:text-blue-600">
-                <Edit2 className="h-4 w-4" />
-              </button>
-              <button
-                onClick={() => deleteUrl(link?.url_id)}
-                className="text-gray-400 hover:text-red-600"
-              >
-                <Trash2 className="h-4 w-4" />
-              </button>
+                <Tooltip
+                  id="analysis-tooltip"
+                  noArrow
+                  className="!py-0 !px-2 !bg-gray-700 !text-white !rounded-lg"
+                />
+              </div>
+              <div>
+                <button
+                  data-tooltip-id="edit-tooltip"
+                  data-tooltip-content={"Edit"}
+                  onClick={() => onEdit(link)}
+                  className="text-gray-400 hover:text-blue-600"
+                >
+                  <Edit2 className="h-4 w-4" />
+                </button>
+                <Tooltip
+                  id="edit-tooltip"
+                  noArrow
+                  className="!py-0 !px-2 !bg-gray-700 !text-white !rounded-lg"
+                />
+              </div>
+              <div>
+                <button
+                  data-tooltip-id="delete-tooltip"
+                  data-tooltip-content={"Delete"}
+                  onClick={() => deleteUrl(link?.url_id)}
+                  className="text-gray-400 hover:text-red-600"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </button>
+                <Tooltip
+                  id="delete-tooltip"
+                  noArrow
+                  className="!py-0 !px-2 !bg-gray-700 !text-white !rounded-lg"
+                />
+              </div>
             </div>
           </div>
         </div>

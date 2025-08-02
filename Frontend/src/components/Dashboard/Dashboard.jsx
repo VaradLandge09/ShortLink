@@ -9,6 +9,7 @@ import {
   createNewUrl,
   deleteUrlUsingId,
   editUrl,
+  getAllLinks,
 } from "../../services/UrlServices";
 
 export default function Dashboard() {
@@ -23,21 +24,33 @@ export default function Dashboard() {
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [editLinkData, setEditLinkData] = useState(null);
 
+  const [totalLinks, setTotalLinks] = useState(0)
+  const [totalClicks, setTotalClicks] = useState(0)
+  const [totalActiveLinks, setTotalActiveLinks] = useState(0)
+
   const navigate = useNavigate();
 
   const getDashboardData = async () => {
     try {
       if (user) {
         console.log("in dashboard");
-        const response = await axios.get(`${host}/all-links-data`, {
-          headers: {
-            user_id: user.id,
-          },
-        });
+        const response = await getAllLinks()
+        let totalL = 0
+        let totalC = 0
+        let totalAL = 0
 
-        console.log(response.data.links);
-        const newLinks = response.data.links;
-        setLinks(newLinks);
+        const newLinks = [...response]
+        newLinks.forEach((link) => {
+          totalL += 1
+          totalC += link.click_count
+          totalAL = link.status === "active" ? totalAL + 1 : totalAL;
+        })
+
+        setTotalLinks(totalL)
+        setTotalClicks(totalC)
+        setTotalActiveLinks(totalAL)
+
+        setLinks(newLinks.sort((a, b) => new Date(b.created_at) - new Date(a.created_at)).slice(0, 5));
       }
     } catch (error) {
       console.error(error.message);
@@ -50,8 +63,13 @@ export default function Dashboard() {
       if (newUrl) {
         const response = await createNewUrl(newUrl, customAlias);
         console.log(response);
-        const link = response;
-        setLinks((prev) => [...prev, link]);
+        const link = [...response];
+
+        setLinks((prev) => [link, ...prev]);
+
+        setTotalLinks(totalLinks + 1)
+        setTotalActiveLinks(totalActiveLinks + 1)
+
         setNewUrl("");
         setCustomAlias("");
       } else {
@@ -68,6 +86,7 @@ export default function Dashboard() {
         const res = deleteUrlUsingId(id);
 
         setLinks((prev) => prev.filter((val) => val.url_id !== id));
+        setTotalLinks(totalLinks - 1)
         console.log(links);
       }
     } catch (error) {}
@@ -97,6 +116,7 @@ export default function Dashboard() {
             : url
         )
       );
+      setTotalClicks(totalClicks + 1)
     }
   };
 
@@ -250,7 +270,7 @@ export default function Dashboard() {
               <div>
                 <p className="text-sm font-medium text-gray-600">Total Links</p>
                 <p className="text-2xl font-bold text-gray-900">
-                  {links.length}
+                  {totalLinks}
                 </p>
               </div>
             </div>
@@ -265,9 +285,7 @@ export default function Dashboard() {
                   Total Clicks
                 </p>
                 <p className="text-2xl font-bold text-gray-900">
-                  {links
-                    .reduce((sum, link) => sum + link?.click_count, 0)
-                    .toLocaleString()}
+                  {totalClicks}
                 </p>
               </div>
             </div>
@@ -282,7 +300,7 @@ export default function Dashboard() {
                   Active Links
                 </p>
                 <p className="text-2xl font-bold text-gray-900">
-                  {links.filter((link) => link?.status === "active").length}
+                  {totalActiveLinks}
                 </p>
               </div>
             </div>
@@ -361,7 +379,7 @@ export default function Dashboard() {
                   onClick={() => navigate("/links")}
                   className="text-blue-600 hover:text-blue-700 font-medium"
                 >
-                  View All Links
+                  View All {totalLinks} Links
                 </button>
               </div>
             </div>

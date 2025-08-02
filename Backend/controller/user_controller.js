@@ -198,7 +198,6 @@ async function updateUrl(req, res) {
         const {newUrl, customAlias} = req.body
 
         const updatedUrl = await userServices.updateUrl({id, newUrl, customAlias})
-        console.log(updatedUrl)
         if(updatedUrl) {
             return res.status(200).json({
                 message: "Updated successfully",
